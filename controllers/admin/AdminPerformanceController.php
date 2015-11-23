@@ -494,6 +494,10 @@ class AdminPerformanceControllerCore extends AdminController
             'Admin.Advparameters.Notification'
         );
 
+        $warning_redis = ' '.$this->l('(you must install the [a]Redis extension[/a])');
+        $warning_redis = str_replace('[a]', '<a href="https://pecl.php.net/package/redis" target="_blank">', $warning_redis);
+        $warning_redis = str_replace('[/a]', '</a>', $warning_redis);
+
         $this->fields_form[6]['form'] = array(
             'legend' => array(
                 'title' => $this->trans('Caching', array(), 'Admin.Advparameters.Feature'),
@@ -541,6 +545,11 @@ class AdminPerformanceControllerCore extends AdminController
                             'id' => 'CacheApc',
                             'value' => 'CacheApc',
                             'label' => $this->trans('APC', array(), 'Admin.Advparameters.Feature').((extension_loaded('apc') || extension_loaded('apcu'))? '' : $warning_apc)
+                        ),
+                        array(
+                            'id' => 'CacheRedis',
+                            'value' => 'CacheRedis',
+                            'label' => $this->l('Redis').(extension_loaded('redis') ? '' : $warning_apc)
                         ),
                         array(
                             'id' => 'CacheXcache',
@@ -845,6 +854,9 @@ class AdminPerformanceControllerCore extends AdminController
                     } elseif ($caching_system == 'CacheXcache' && !ini_get('xcache.var_size')) {
                         $this->errors[] = $this->trans('To use Xcache, you must configure "xcache.var_size" for the Xcache extension (recommended value 16M to 64M).', array(), 'Admin.Advparameters.Notification').'
 							<a href="http://xcache.lighttpd.net/wiki/XcacheIni">http://xcache.lighttpd.net/wiki/XcacheIni</a>';
+                    } elseif ($caching_system == 'CacheRedis' && !extension_loaded('redis')){
+                        $this->errors[] = Tools::displayError('To use Redis, you must install the Redis extension on your server.').'
+                            <a href="https://pecl.php.net/package/redis">https://pecl.php.net/package/redis</a>';
                     }
 
                     if ($caching_system == 'CacheMemcache' && !_PS_CACHE_ENABLED_ && _PS_CACHING_SYSTEM_ == 'CacheMemcache') {
