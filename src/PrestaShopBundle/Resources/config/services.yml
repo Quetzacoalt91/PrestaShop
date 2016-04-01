@@ -114,6 +114,7 @@ services:
 
     prestashop.adapter.data_provider.module:
         class: PrestaShop\PrestaShop\Adapter\Module\ModuleDataProvider
+        arguments: ["@doctrine.orm.entity_manager"]
 
     # Presenters
     prestashop.adapter.presenter.module:
