@@ -24,8 +24,7 @@ class ModuleController extends FrameworkBundleAdminController
     {
         $modulesProvider = $this->get('prestashop.core.admin.data_provider.module_interface');
         $translator = $this->get('prestashop.adapter.translator');
-        $moduleManager_Factory = new ModuleManagerBuilder();
-        $moduleRepository = $moduleManager_Factory->buildRepository();
+        $moduleRepository =  $this->get('prestashop.core.admin.module.repository');
 
         $filters = new AddonListFilter();
         $filters->setType(AddonListFilterType::MODULE | AddonListFilterType::SERVICE)
@@ -67,8 +66,7 @@ class ModuleController extends FrameworkBundleAdminController
 
         $modulesProvider = $this->get('prestashop.core.admin.data_provider.module_interface');
         $translator = $this->get('prestashop.adapter.translator');
-        $moduleManagerFactory = new ModuleManagerBuilder();
-        $moduleRepository = $moduleManagerFactory->buildRepository();
+        $moduleRepository =  $this->get('prestashop.core.admin.module.repository');
         $responseArray = [];
 
         $filters = new AddonListFilter();
@@ -113,8 +111,7 @@ class ModuleController extends FrameworkBundleAdminController
     {
         $translator = $this->get('prestashop.adapter.translator');
         $modulesProvider = $this->get('prestashop.core.admin.data_provider.module_interface');
-        $moduleManagerFactory = new ModuleManagerBuilder();
-        $moduleRepository = $moduleManagerFactory->buildRepository();
+        $moduleRepository =  $this->get('prestashop.core.admin.module.repository');
 
         $filters = new AddonListFilter();
         $filters->setType(AddonListFilterType::MODULE | AddonListFilterType::SERVICE)
@@ -169,9 +166,8 @@ class ModuleController extends FrameworkBundleAdminController
         $module = $request->attributes->get('module_name');
         $forceDeletion = $request->query->has('deletion');
 
-        $moduleManagerFactory = new ModuleManagerBuilder();
-        $moduleManager = $moduleManagerFactory->build();
-        $moduleRepository = $moduleManagerFactory->buildRepository();
+        $moduleManager =  $this->get('prestashop.module.manager');
+        $moduleRepository =  $this->get('prestashop.core.admin.module.repository');
         $modulesProvider = $this->get('prestashop.core.admin.data_provider.module_interface');
 
         $ret = array();
@@ -233,8 +229,7 @@ class ModuleController extends FrameworkBundleAdminController
     {
         $translator = $this->get('prestashop.adapter.translator');
         $modulesProvider = $this->get('prestashop.core.admin.data_provider.module_interface');
-        $moduleManagerFactory = new ModuleManagerBuilder();
-        $moduleRepository = $moduleManagerFactory->buildRepository();
+        $moduleRepository =  $this->get('prestashop.core.admin.module.repository');
 
         $filters = new AddonListFilter();
         $filters->setType(AddonListFilterType::MODULE | AddonListFilterType::SERVICE)
@@ -304,9 +299,8 @@ class ModuleController extends FrameworkBundleAdminController
      */
     public function importModuleAction(Request $request)
     {
-        $moduleManagerFactory = new ModuleManagerBuilder();
-        $moduleManager = $moduleManagerFactory->build();
-        $moduleRepository = $moduleManagerFactory->buildRepository();
+        $moduleManager =  $this->get('prestashop.module.manager');
+        $moduleRepository =  $this->get('prestashop.core.admin.module.repository');
 
         try {
             $file_uploaded = $request->files->get('file_uploaded');
@@ -363,8 +357,7 @@ class ModuleController extends FrameworkBundleAdminController
         $legacyUrlGenerator = $this->get('prestashop.core.admin.url_generator_legacy');
         $legacyContextProvider = $this->get('prestashop.adapter.legacy.context');
         $legacyContext = $legacyContextProvider->getContext();
-        $moduleManagerFactory = new ModuleManagerBuilder();
-        $moduleRepository = $moduleManagerFactory->buildRepository();
+        $moduleRepository =  $this->get('prestashop.core.admin.module.repository');
         // Get accessed module object
         $moduleAccessed = $moduleRepository->getModule($module_name);
 
