@@ -66,8 +66,8 @@ class ModuleDataProvider
             } else {
                 $lastAccessDate = '0000-00-00 00:00:00';
             }
-            $result['last_access_date'] = $lastAccessDate;
 
+            $result['last_access_date'] = $lastAccessDate;
             return $result;
         }
 
