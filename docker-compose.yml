@@ -1,0 +1,41 @@
+application:
+    image: prestashop/prestashop
+    volumes:
+        - ./:/var/www/html/
+    entrypoint: /bin/bash
+dbdata:
+    image: mysql
+    volumes:
+        - /var/lib/mysql
+    entrypoint: /bin/bash
+mysql:
+    image: mysql:5.6
+    ports:
+        - "3308:3306"
+    volumes_from:
+        - dbdata
+    environment:
+        MYSQL_ROOT_PASSWORD: doge
+        MYSQL_DATABASE: prestashop
+prestashop:
+    image: prestashop/prestashop
+    links:
+        - "mysql"
+    ports:
+        - "8050:80"
+    volumes_from:
+        - application
+    environment:
+        PS_INSTALL_AUTO: 1
+        DB_SERVER: mysql
+        DB_USER: root
+        DB_PASSWD: doge
+        DB_NAME: prestashop
+        PS_DEV_MODE: 1
+        PS_LANGUAGE: en
+        PS_COUNTRY: fr
+        PS_DOMAIN: localhost
+        PS_PASSWORD: 123456789
+        PS_FOLDER_ADMIN: admin-dev
+        PS_FOLDER_INSTALL: install-dev
+

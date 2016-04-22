@@ -1,13 +1,15 @@
 language: php
 
+sudo: false
+
 services:
-  - mysql
+  - docker
+  
+cache:
+  directories:
+    - $HOME/.composer/cache
 
 addons:
-    apt_packages:
-        - mysql-server
-        - apache2
-        - postfix
     sauce_connect: true
 
 sudo: required
@@ -15,8 +17,6 @@ dist: trusty
 group: edge
 
 php:
-  - 5.4
-  - 5.5
   - 5.6
   - 7.0
     
@@ -26,56 +26,37 @@ matrix:
     - php: 7.0
 
 before_install:
-  - if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.0" ]]; then sudo cp tests/php7-pool.conf ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.d/; fi
-  - sudo add-apt-repository "deb http://archive.ubuntu.com/ubuntu/ trusty multiverse" && sudo add-apt-repository "deb http://archive.ubuntu.com/ubuntu/ trusty-updates multiverse"
-  - sudo add-apt-repository "deb http://archive.ubuntu.com/ubuntu/ trusty universe" && sudo add-apt-repository "deb http://archive.ubuntu.com/ubuntu/ trusty-updates universe"
-  - sudo apt-get update -qq
-  - sudo apt-get install libapache2-mod-fastcgi
-  - phpenv config-rm xdebug.ini
-  - mysql -u root -e 'create database prestashop;'
+  - mysql -e 'create database prestashop;'
   - cp ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf.default ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf
   - sudo a2enmod rewrite actions fastcgi alias
   - echo "cgi.fix_pathinfo = 1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
   - echo "memory_limit = 512M" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
   - echo "always_populate_raw_post_data = -1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
   - ~/.phpenv/versions/$(phpenv version-name)/sbin/php-fpm
-  - sudo cp -f tests/travis-ci-apache-vhost /etc/apache2/sites-available/prestashop.conf
+  - sudo cp -f tests/travis-ci-apache-vhost /etc/apache2/sites-available/default
   - sudo cp -Rf . /var/www/prestashop.unit.test
   - sudo chmod 777 -R /var/www/
-  - sudo a2dissite 000-default
-  - sudo a2ensite prestashop.conf
   - sudo service apache2 restart
-  - cp -Rf .composer/* ~/.composer/ & composer global install;
-  - sudo apt-get install -y libappindicator1 fonts-liberation
-  - wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-  - sudo dpkg -i google-chrome*.deb
 
 before_script:
-  - export CHROME_BIN=/usr/bin/google-chrome
-
-notifications:
-  slack: prestashop:Eovjydk55zPrwPkoQIOF0cZn
-  hipchat: ec4e21c5eb82066ba8be5fd1afefde@1184657
+  - "mkdir -p ~/.composer"
+  - cp .travis.composer.config.json ~/.composer/config.json
+  - cp tests/parameters.yml.travis app/config/parameters.yml
+  - composer install --no-interaction --no-progress
+  - docker-compose up -d
+  - smtp-sink -d "%d.%H.%M.%S" localhost:2500 1000 &
+  - echo $(phpenv version-name)
+  #- echo -e '#!/usr/bin/env bash\nexit 0' | sudo tee /usr/sbin/sendmail
+  #- echo 'sendmail_path = "/usr/sbin/sendmail -t -i "' | sudo tee "/home/travis/.phpenv/versions/`php -i | grep "PHP Version" | head -n 1 | grep -o -P '\d+\.\d+\.\d+.*'`/etc/conf.d/sendmail.ini"
 
 script:
-  - cd /var/www/prestashop.unit.test && cp tests/parameters.yml.travis app/config/parameters.yml && cp tests/composer.lock.travis ./composer.lock
-  - if [[ ${TRAVIS_PHP_VERSION:0:3} == "5.4" ]]; then GITHUB_OAUTH_TOKEN=${GITHUB_OAUTH_TOKEN} ./travis-scripts/check-composer-update; fi
-  - composer install --prefer-dist --no-interaction --no-progress
   - tests/check_php_parse_errors.sh
-  - bash ./travis-scripts/install-prestashop
-  - bash ./travis-scripts/backup-prestashop
-  - php bin/phpunit -c tests/
-  - composer phpunit-sf
-  - cd $TRAVIS_BUILD_DIR # because /var/www/prestashop.unit.test (cwd) is about to be deleted
-  - bash ./travis-scripts/restore-backup
+  - docker exec -t prestashop_mysql_1 mysqldump -uroot -pdoge prestashop > /tmp/db.sql
+  - docker exec -t prestashop_prestashop_1 php bin/phpunit -c tests/
+  - docker exec -t prestashop_prestashop_1 php bin/phpunit -c admin-dev/
+  - docker-compose rm -fv
+  - docker-compose up -d
   - bash ./travis-scripts/run-selenium-tests
 
 after_script:
-  - sudo cat /var/log/apache2/error.log
-  - google-chrome --version
-
-after_failure:
-  - curl http://localhost/prestashop.unit.test/
-  - cat /etc/apache2/envvars
-  - cat /etc/apache2/sites-available/prestashop.conf
-  - sudo ls -l /var/log/apache2
+  - firefox --version
