@@ -57,6 +57,8 @@ before_install:
   - cp -Rf .composer/* ~/.composer/ & composer global install;
   - wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
   - sudo dpkg -i google-chrome*.deb
+  - git clone https://github.com/PrestaShop/PSFunctionalTests.git $TRAVIS_BUILD_DIR/PSFunctionalTests
+  - cd $TRAVIS_BUILD_DIR/PSFunctionalTests && npm install && cd -
 
 before_script:
   - export CHROME_BIN=/usr/bin/google-chrome
@@ -77,6 +79,9 @@ script:
   - bash ./travis-scripts/restore-backup
   - bash ./travis-scripts/run-selenium-tests
   - bash ./travis-scripts/test-startertheme
+  - cd $TRAVIS_BUILD_DIR/PSFunctionalTests/test/itg/1.7
+  - echo "<?php define('_PS_MODE_DEV_', false); ?>" > /var/www/prestashop.unit.test/config/defines_custom.inc.php
+  - $TRAVIS_BUILD_DIR/PSFunctionalTests/node_modules/mocha/bin/mocha index.webdriverio.js -c --URL="localhost/prestashop.unit.test" --MODULE=None --SAUCELABS=None
 
 after_script:
   - sudo cat /var/log/apache2/error.log
