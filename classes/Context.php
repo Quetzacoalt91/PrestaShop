@@ -343,7 +343,7 @@ class ContextCore
     public function getTranslator()
     {
         if (null === $this->translator) {
-            $this->translator = new Translator($this->language->locale, null, _PS_CACHE_DIR_, false);
+            $this->translator = new Translator($this->language->locale, null, rtrim(_PS_CACHE_DIR_, DIRECTORY_SEPARATOR), false);
             $this->translator->addLoader('xlf', new XliffFileLoader());
 
             $sqlTranslationLoader = new SqlTranslationLoader();
