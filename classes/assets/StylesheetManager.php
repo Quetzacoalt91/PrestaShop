@@ -69,10 +69,6 @@ class StylesheetManagerCore extends AbstractAssetManager
 
     protected function add($id, $fullPath, $media, $priority, $inline)
     {
-        if (filesize($fullPath) === 0) {
-            return;
-        }
-
         $media = $this->getSanitizedMedia($media);
         $type = ($inline) ? 'inline' : 'external';
 

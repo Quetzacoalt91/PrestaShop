@@ -52,11 +52,27 @@ abstract class AbstractAssetManagerCore
 
     protected function getFullPath($relativePath)
     {
-        foreach ($this->directories as $baseDir) {
-            $fullPath = realpath($baseDir.'/'.$relativePath);
-            if (is_file($fullPath)) {
+        foreach ($this->getDirectories() as $baseDir) {
+            $fullPath = $baseDir . ltrim($relativePath, '/'); // not DIRECTORY_SEPARATOR because, it's path included manualy
+            if (file_exists($this->getPathFromUri($fullPath))) {
                 return $fullPath;
             }
         }
+        return false;
+    }
+
+    private function getDirectories()
+    {
+        static $directories;
+
+        if (null === $directories) {
+            foreach ($this->directories as $baseDir) {
+                if (!empty($baseDir)) {
+                    $directories[] = $baseDir;
+                }
+            }
+        }
+
+        return $directories;
     }
 }
