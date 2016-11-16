@@ -51,7 +51,7 @@ class CccReducerCore
         $files = array();
         foreach ($cssFileList['external'] as $css) {
             if ('all' === $css['media']) {
-                $files[] = $css['path'];
+                $files[] = $this->getPathFromUri($css['path']);
             }
         }
 
@@ -83,7 +83,7 @@ class CccReducerCore
             foreach ($list['external'] as $key => $js) {
                 // We only CCC the file without 'refer' or 'async'
                 if ('' === $js['attribute']) {
-                    $files[] = $js['path'];
+                    $files[] = $this->getPathFromUri($js['path']);
                     unset($list['external'][$key]);
                 }
             }
