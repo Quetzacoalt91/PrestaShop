@@ -191,10 +191,13 @@ class CommonController extends FrameworkBundleAdminController
     /**
      * Render a right sidebar with content from an URL
      */
-    public function renderSidebarAction($url, $title = '', $footer = '')
+    public function renderSidebarAction(Request $request, $url, $title = '', $footer = '')
     {
         $tools = $this->container->get('prestashop.adapter.tools');
-
+        if ($request->query->has('callback')) {
+            $url .= '&callback='.$request->query->get('callback');
+        }
+        dump(urldecode($url));
         return $this->render('PrestaShopBundle:Admin:Common/_partials/_sidebar.html.twig', [
             'footer' => $tools->purifyHTML($footer),
             'title' => $title,

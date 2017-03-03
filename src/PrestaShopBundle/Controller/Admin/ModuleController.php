@@ -57,7 +57,7 @@ class ModuleController extends FrameworkBundleAdminController
                 'requireBulkActions' => false,
                 'showContentHeader' => true,
                 'enableSidebar' => true,
-                'help_link' => $this->generateSidebarLink('AdminModules'),
+                'help_link' => $this->generateSidebarLink('module/catalog'),
                 'requireFilterStatus' => false,
             ));
     }
@@ -213,7 +213,7 @@ class ModuleController extends FrameworkBundleAdminController
                 'requireAddonsSearch' => false,
                 'requireBulkActions' => true,
                 'enableSidebar' => true,
-                'help_link' => $this->generateSidebarLink('AdminModules'),
+                'help_link' => $this->generateSidebarLink('module/manage'),
                 'requireFilterStatus' => true,
             ));
     }
@@ -358,7 +358,7 @@ class ModuleController extends FrameworkBundleAdminController
             'enableSidebar' => true,
             'layoutHeaderToolbarBtn' => $this->getToolbarButtons(),
             'layoutTitle' => $layoutTitle,
-            'help_link' => $this->generateSidebarLink('AdminModules'),
+            'help_link' => $this->generateSidebarLink('module/notifications'),
             'modules' => $moduleManager->getModulesWithNotifications($modulesPresenter),
             'requireAddonsSearch' => false,
             'requireBulkActions' => false,

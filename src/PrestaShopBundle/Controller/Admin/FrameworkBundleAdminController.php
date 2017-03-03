@@ -130,13 +130,13 @@ class FrameworkBundleAdminController extends Controller
             $title = $translator->trans('Help', array(), 'Admin.Global');
         }
 
-        $docLink = urlencode('http://help.prestashop.com/'.$legacyContext->getEmployeeLanguageIso().'/doc/'
-            .$section.'?version='._PS_VERSION_.'&country='.$legacyContext->getEmployeeLanguageIso());
+        $docLink = 'http://help.prestashop.local/api/?request=getHelp='
+            .urlencode($section.'&version='._PS_VERSION_.'&language='.$legacyContext->getEmployeeLanguageIso());
 
-        return $this->generateUrl('admin_common_sidebar', [
+        return $docLink;/*$this->generateUrl('admin_common_sidebar', [
             'url' => $docLink,
             'title' => $title,
-        ]);
+        ]);*/
     }
 
     /**

@@ -26,21 +26,30 @@ var rightSidebar = (function() {
         },
         'loadQuickNav': function(url, target) {
             /** Loads inner HTML in the sidebar container */
-            $(target).load(url, function() {
-                $(this).removeAttr('data-url');
-                $('ul.pagination > li > a[href]', this).on('click', function(e) {
-                    e.preventDefault();
-                    rightSidebar.navigationChange($(e.target).attr('href'), $(target));
-                });
-                $('ul.pagination > li > input[name="paginator_jump_page"]', this).on('keyup', function(e) {
-                    if (e.which === 13) { // ENTER
-                        e.preventDefault();
-                        var val = parseInt($(e.target).val());
-                        var limit = $(e.target).attr('pslimit');
-                        var url = $(this).attr('psurl').replace(/999999/, (val-1)*limit);
-                        rightSidebar.navigationChange(url, $(target));
+            $.ajax( {
+                url: url,
+                jsonp:"callback",
+                dataType:"jsonp",
+                success: function(data) {
+                    if (isCleanHtml(data))
+                    {
+                        $(target).html(data);
+                        $(this).removeAttr('data-url');
+                        $('ul.pagination > li > a[href]', this).on('click', function(e) {
+                            e.preventDefault();
+                            rightSidebar.navigationChange($(e.target).attr('href'), $(target));
+                        });
+                        $('ul.pagination > li > input[name="paginator_jump_page"]', this).on('keyup', function(e) {
+                            if (e.which === 13) { // ENTER
+                                e.preventDefault();
+                                var val = parseInt($(e.target).val());
+                                var limit = $(e.target).attr('pslimit');
+                                var url = $(this).attr('psurl').replace(/999999/, (val-1)*limit);
+                                rightSidebar.navigationChange(url, $(target));
+                            }
+                        });
                     }
-                });
+                }
             });
         },
         'navigationChange': function(url, sidebar) {
