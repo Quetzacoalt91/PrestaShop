@@ -32,4 +32,22 @@ use Symfony\Component\Translation\Translator as BaseTranslatorComponent;
 class TranslatorComponent extends BaseTranslatorComponent
 {
     use PrestaShopTranslatorTrait;
+
+    public function __construct($locale, $options)
+    {
+        $cacheDir = !empty($options['cacheDir'])?
+            $options['cacheDir']:
+            null;
+        $debug = !empty($options['debug'])?
+            $options['debug']:
+            false;
+
+        foreach($options['loaders'] as $format => $loader) {
+            $this->addLoader($format, $loader);
+        }
+        foreach($options['resources'] as $resource) {
+            $this->addResource($resource['format'], $resource['resource'], $resource['locale'], $resource['domain']);
+        }
+        parent::__construct($locale, null, $cacheDir, $debug);
+    }
 }
