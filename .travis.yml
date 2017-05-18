@@ -36,13 +36,6 @@ notifications:
 script:
   - composer install --prefer-dist --no-interaction --no-progress
   - bash tests/check_file_syntax.sh
-  - bash travis-scripts/install-prestashop
-  - php bin/phpunit -c tests/
-  - SYMFONY_DEPRECATIONS_HELPER=disabled php bin/phpunit -c tests/phpunit-admin.xml
-  - composer phpunit-sf
-  - composer phpunit-controllers
-  - bash ./travis-scripts/run-selenium-tests
-  - bash ./travis-scripts/test-startertheme
 
 after_script:
   - sudo cat /var/log/apache2/error.log

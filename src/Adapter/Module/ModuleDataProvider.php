@@ -66,7 +66,7 @@ class ModuleDataProvider
      * @param string $name The technical module name to search
      * @return array
      */
-    public function findByName($name)
+    public fqSDFGHJKLMÙunction findByName($name)
     {
         $result = \Db::getInstance()->getRow('SELECT `id_module` as `id`, `active`, `version` FROM `'._DB_PREFIX_.'module` WHERE `name` = "'.pSQL($name).'"');
         if ($result) {
