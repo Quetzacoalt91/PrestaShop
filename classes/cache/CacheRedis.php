@@ -27,7 +27,7 @@
 /**
  * This class require PHP Redis (PECL) extension
  */
-class CacheRedisCore extends Cache
+class CacheRedisCore extends CacheArray
 {
     /**
      * @var Redis
@@ -82,11 +82,11 @@ class CacheRedisCore extends Cache
         }
 
         if ((int)$ttl > 0) {
-            return $this->redis->setex($key, (int)$ttl, $value);
+            return $this->redis->setex(_DB_NAME_.'.'.$key, (int)$ttl, $value);
         }
         else
         {
-            return $this->redis->set($key, $value);
+            return $this->redis->set(_DB_NAME_.'.'.$key, $value);
         }
     }
 
@@ -156,7 +156,7 @@ class CacheRedisCore extends Cache
 
     public function get($key)
     {
-        return !$this->is_connected?false:(bool)$this->_get($key);
+        return !$this->is_connected?false:$this->_get($key);
     }
 
     public function set($key, $value, $ttl = 3600)
@@ -172,5 +172,23 @@ class CacheRedisCore extends Cache
     public function delete($key)
     {
         return !$this->is_connected?false:(bool)$this->_delete($key);
+    }
+
+    public static function store($key, $value)
+    {
+        return $this->set($key, $value);
+    }
+
+    public static function clean($key)
+    {
+        if (!$this->is_connected) {
+            return false;
+        }
+
+        // Case if redis is shared with other apps
+        $keys = $this->redis->keys(_DB_NAME_.'.'.$key);
+        $this->redis->delete(implode(' ', $keys));
+
+        return true;
     }
 }

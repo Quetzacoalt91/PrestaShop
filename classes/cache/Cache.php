@@ -73,46 +73,42 @@ abstract class CacheCore
     /**
      * @var array Store local cache
      */
-    protected static $local = array();
+    protected $local = array();
 
-    /**
-     * Cache a data
+        /**
+     * Store a data in cache
      *
      * @param string $key
      * @param mixed $value
      * @param int $ttl
      * @return bool
      */
-    abstract protected function _set($key, $value, $ttl = 0);
+    abstract public function set($key, $value, $ttl = 0);
 
     /**
-     * Retrieve a cached data by key
+     * Retrieve a data from cache
      *
      * @param string $key
      * @return mixed
      */
-    abstract protected function _get($key);
+    abstract public function get($key);
 
     /**
-     * Check if a data is cached by key
+     * Check if a data is cached
      *
      * @param string $key
      * @return bool
      */
-    abstract protected function _exists($key);
+    abstract public function exists($key);
 
     /**
-     * Delete a data from the cache by key
+     * Delete one or several data from cache (* joker can be used)
+     * 	E.g.: delete('*'); delete('my_prefix_*'); delete('my_key_name');
      *
      * @param string $key
-     * @return bool
+     * @return array List of deleted keys
      */
-    abstract protected function _delete($key);
-
-    /**
-     * Write keys index
-     */
-    abstract protected function _writeKeys();
+    abstract public function delete($key);
 
     /**
      * Clean all cached data
@@ -126,17 +122,86 @@ abstract class CacheCore
      */
     public static function getInstance()
     {
-        if (!self::$instance) {
+        if (self::$instance) {
+            return self::$instance;
+        }
+
+        if (_PS_CACHE_ENABLED_) {
             $caching_system = _PS_CACHING_SYSTEM_;
             self::$instance = new $caching_system();
+        }
+        else {
+            self::$instance = new CacheArray();
         }
         return self::$instance;
     }
 
     /**
-     * Unit testing purpose only
-     * @param $test_instance Cache
+     * Cache a data
+     *
+     * @param string $key
+     * @param mixed $value
+     * @param int $ttl
+     * @return bool
      */
+    protected function _set($key, $value, $ttl = 0)
+    {
+        return $this->set($key, $value, $ttl);
+    }
+
+    /**
+     * Retrieve a cached data by key
+     *
+     * @param string $key
+     * @return mixed
+     */
+    protected function _get($key)
+    {
+        return $this->get($key);
+    }
+
+    /**
+     * Check if a data is cached by key
+     *
+     * @param string $key
+     * @return bool
+     */
+    protected function _exists($key)
+    {
+        return $this->exists($key);
+    }
+
+    /**
+     * Delete a data from the cache by key
+     *
+     * @param string $key
+     * @return bool
+     */
+    protected function _delete($key)
+    {
+        return self::getInstance()->delete($key);
+    }
+    
+    public static function store($key, $value)
+    {
+        return self::getInstance()->set($key, $value);
+    }
+
+    public static function retrieve($key)
+    {
+        return self::getInstance()->get($key);
+    }
+
+    public static function retrieveAll()
+    {
+        return array();
+    }
+
+    public static function isStored($key)
+    {
+        return self::getInstance()->exists($key);
+    }
+
     public static function setInstanceForTesting($test_instance)
     {
         self::$instance = $test_instance;
@@ -148,97 +213,6 @@ abstract class CacheCore
     public static function deleteTestingInstance()
     {
         self::$instance = null;
-    }
-
-    /**
-     * Store a data in cache
-     *
-     * @param string $key
-     * @param mixed $value
-     * @param int $ttl
-     * @return bool
-     */
-    public function set($key, $value, $ttl = 0)
-    {
-        if ($this->_set($key, $value, $ttl)) {
-            if ($ttl < 0) {
-                $ttl = 0;
-            }
-
-            $this->keys[$key] = ($ttl == 0) ? 0 : time() + $ttl;
-            $this->_writeKeys();
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Retrieve a data from cache
-     *
-     * @param string $key
-     * @return mixed
-     */
-    public function get($key)
-    {
-        if (!isset($this->keys[$key])) {
-            return false;
-        }
-
-        return $this->_get($key);
-    }
-
-    /**
-     * Check if a data is cached
-     *
-     * @param string $key
-     * @return bool
-     */
-    public function exists($key)
-    {
-        if (!isset($this->keys[$key])) {
-            return false;
-        }
-
-        return $this->_exists($key);
-    }
-
-    /**
-     * Delete one or several data from cache (* joker can be used)
-     * 	E.g.: delete('*'); delete('my_prefix_*'); delete('my_key_name');
-     *
-     * @param string $key
-     * @return array List of deleted keys
-     */
-    public function delete($key)
-    {
-        // Get list of keys to delete
-        $keys = array();
-        if ($key == '*') {
-            $keys = $this->keys;
-        } elseif (strpos($key, '*') === false) {
-            $keys = array($key);
-        } else {
-            $pattern = str_replace('\\*', '.*', preg_quote($key));
-            foreach ($this->keys as $k => $ttl) {
-                if (preg_match('#^'.$pattern.'$#', $k)) {
-                    $keys[] = $k;
-                }
-            }
-        }
-
-        // Delete keys
-        foreach ($keys as $key) {
-            if (!isset($this->keys[$key])) {
-                continue;
-            }
-
-            if ($this->_delete($key)) {
-                unset($this->keys[$key]);
-            }
-        }
-
-        $this->_writeKeys();
-        return $keys;
     }
 
     /**
@@ -363,43 +337,17 @@ abstract class CacheCore
         return false;
     }
 
-    public static function store($key, $value)
-    {
-        // PHP is not efficient at storing array
-        // Better delete the whole cache if there are
-        // more than 1000 elements in the array
-        if (count(Cache::$local) > 1000) {
-            Cache::$local = array();
-        }
-        Cache::$local[$key] = $value;
-    }
-
-    public static function retrieve($key)
-    {
-        return isset(Cache::$local[$key]) ? Cache::$local[$key] : null;
-    }
-
-    public static function retrieveAll()
-    {
-        return Cache::$local;
-    }
-
-    public static function isStored($key)
-    {
-        return isset(Cache::$local[$key]);
-    }
-
     public static function clean($key)
     {
         if (strpos($key, '*') !== false) {
             $regexp = str_replace('\\*', '.*', preg_quote($key, '#'));
-            foreach (array_keys(Cache::$local) as $key) {
+            foreach (array_keys(self::retrieveAll()) as $key => $value) {
                 if (preg_match('#^'.$regexp.'$#', $key)) {
-                    unset(Cache::$local[$key]);
+                    $this->delete($key);
                 }
             }
         } else {
-            unset(Cache::$local[$key]);
+            $this->delete($key);
         }
     }
 }
