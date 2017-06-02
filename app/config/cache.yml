@@ -1,0 +1,33 @@
+cache_adapter:
+  providers:
+    my_chain:
+      factory: 'cache.factory.chain'
+      options:
+        services:
+            - '@cache.provider.ps_array'
+            - '@cache.provider.ps_filesystem'
+    ps_array:
+        factory: 'cache.factory.array'
+    ps_filesystem:
+      factory: 'cache.factory.doctrine_filesystem'
+      options:
+        directory: '%kernel.cache_dir%/doctrine'
+
+# Other examples :
+    
+#    my_redis:
+#      factory: 'cache.factory.redis'
+#      options: 
+#        host: 10.0.0.15 # Using custom host
+#        port: 6379
+#    my_memcached:
+#      factory: 'cache.factory.memcached'
+#      aliases: ['alias.my_memcached']
+#      options:
+#        host: 10.0.0.16
+#        port: 11218
+#        redundant_servers:
+#          - { host: 10.0.0.17, port: 11211  }
+#          - { host: 10.0.0.18 } # port 11218 will be used
+#    my_apc:
+#      factory: 'cache.factory.apc' 

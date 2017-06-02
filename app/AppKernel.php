@@ -46,6 +46,8 @@ class AppKernel extends Kernel
             new PrestaShop\TranslationToolsBundle\TranslationToolsBundle(),
             // Api consumer
             new Csa\Bundle\GuzzleBundle\CsaGuzzleBundle(),
+            // Cache management (PSR-6)
+            new Cache\AdapterBundle\CacheAdapterBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {
