@@ -2013,7 +2013,7 @@ class ToolsCore
 
     public static function simplexml_load_file($url, $class_name = null)
     {
-        $cache_id = 'Tools::simplexml_load_file'.$url;
+        $cache_id = '|Tools|simplexml_load_file|'.$url;
         if (!Cache::isStored($cache_id)) {
             $result = @simplexml_load_string(Tools::file_get_contents($url), $class_name);
             Cache::store($cache_id, $result);

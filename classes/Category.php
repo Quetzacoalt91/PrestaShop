@@ -632,7 +632,7 @@ class CategoryCore extends ObjectModel
             $groups = (array) $groups;
         }
 
-        $cacheId = 'Category::getAllCategoriesName_'.md5(
+        $cacheId = '|Category|getAllCategoriesName|'.md5(
             (int) $idRootCategory.
             (int) $idLang.
             (int) $active.
@@ -706,7 +706,7 @@ class CategoryCore extends ObjectModel
             $groups = (array) $groups;
         }
 
-        $cacheId = 'Category::getNestedCategories_'.md5(
+        $cacheId = '|Category|getNestedCategories|'.md5(
                 (int) $idRootCategory.
                 (int) $idLang.
                 (int) $active.
@@ -1032,7 +1032,7 @@ class CategoryCore extends ObjectModel
             die(Tools::displayError());
         }
 
-        $cacheId = 'Category::getChildren_'.(int) $idParent.'-'.(int) $idLang.'-'.(bool) $active.'-'.(int) $idShop;
+        $cacheId = '|Category|getChildren|'.(int) $idParent.'-'.(int) $idLang.'-'.(bool) $active.'-'.(int) $idShop;
         if (!Cache::isStored($cacheId)) {
             $query = 'SELECT c.`id_category`, cl.`name`, cl.`link_rewrite`, category_shop.`id_shop`
 			FROM `'._DB_PREFIX_.'category` c
@@ -1068,7 +1068,7 @@ class CategoryCore extends ObjectModel
             die(Tools::displayError());
         }
 
-        $cacheId = 'Category::hasChildren_'.(int) $idParent.'-'.(int) $idLang.'-'.(bool) $active.'-'.(int) $idShop;
+        $cacheId = '|Category|hasChildren|'.(int) $idParent.'-'.(int) $idLang.'-'.(bool) $active.'-'.(int) $idShop;
         if (!Cache::isStored($cacheId)) {
             $query = 'SELECT c.id_category, "" as name
 			FROM `'._DB_PREFIX_.'category` c
@@ -1331,7 +1331,7 @@ class CategoryCore extends ObjectModel
     public static function searchByName($idLang, $query, $unrestricted = false, $skipCache = false)
     {
         if ($unrestricted === true) {
-            $key = 'Category::searchByName_'.$query;
+            $key = '|Category|searchByName|'.$query;
             if ($skipCache || !Cache::isStored($key)) {
                 $sql = new DbQuery();
                 $sql->select('c.*, cl.*');
@@ -1533,7 +1533,7 @@ class CategoryCore extends ObjectModel
      */
     public function getGroups()
     {
-        $cacheId = 'Category::getGroups_'.(int) $this->id;
+        $cacheId = '|Category|getGroups|'.(int) $this->id;
         if (!Cache::isStored($cacheId)) {
             $sql = new DbQuery();
             $sql->select('cg.`id_group`');
@@ -1578,7 +1578,7 @@ class CategoryCore extends ObjectModel
      */
     public function checkAccess($idCustomer)
     {
-        $cacheId = 'Category::checkAccess_'.(int) $this->id.'-'.$idCustomer.(!$idCustomer ? '-'.(int)Group::getCurrent()->id : '');
+        $cacheId = '|Category|checkAccess|'.(int) $this->id.'-'.$idCustomer.(!$idCustomer ? '-'.(int)Group::getCurrent()->id : '');
         if (!Cache::isStored($cacheId)) {
             if (!$idCustomer) {
                 $result = (bool)Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue('
@@ -1789,7 +1789,7 @@ class CategoryCore extends ObjectModel
      */
     public static function getInterval($id)
     {
-        $cacheId = 'Category::getInterval_'.(int) $id;
+        $cacheId = '|Category|getInterval|'.(int) $id;
         if (!Cache::isStored($cacheId)) {
             $sql = new DbQuery();
             $sql->select('c.`nleft`, c.`nright`, c.`level_depth`');
@@ -2048,7 +2048,7 @@ class CategoryCore extends ObjectModel
      */
     public static function getCategoriesWithoutParent()
     {
-        $cacheId = 'Category::getCategoriesWithoutParent_'.(int)Context::getContext()->language->id;
+        $cacheId = '|Category|getCategoriesWithoutParent|'.(int)Context::getContext()->language->id;
         if (!Cache::isStored($cacheId)) {
             $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS('
 			SELECT DISTINCT c.*
@@ -2088,7 +2088,7 @@ class CategoryCore extends ObjectModel
         if (is_null($idLang)) {
             $idLang = (int) Context::getContext()->language->id;
         }
-        $cacheId = 'Category::getTopCategory_'.(int) $idLang;
+        $cacheId = '|Category|getTopCategory|'.(int) $idLang;
         if (!Cache::isStored($cacheId)) {
             $idCategory = (int) Db::getInstance()->getValue('
 			SELECT `id_category`

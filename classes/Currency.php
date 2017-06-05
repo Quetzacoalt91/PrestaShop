@@ -417,7 +417,7 @@ class CurrencyCore extends ObjectModel
      */
     public static function getIdByIsoCode($isoCode, $idShop = 0)
     {
-        $cacheId = 'Currency::getIdByIsoCode_'.pSQL($isoCode).'-'.(int) $idShop;
+        $cacheId = '|Currency|getIdByIsoCode|'.pSQL($isoCode).'-'.(int) $idShop;
         if (!Cache::isStored($cacheId)) {
             $query = Currency::getIdByQuery($idShop);
             $query->where('iso_code = \''.pSQL($isoCode).'\'');

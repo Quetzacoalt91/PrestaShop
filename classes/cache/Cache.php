@@ -104,6 +104,10 @@ abstract class CacheCore implements CacheItemPoolInterface
 
     public static function clean($key)
     {
-        self::getInstance()->deleteItem($key);
+        if (is_array($key)) {
+            self::getInstance()->deleteItems($key);
+        } else {
+            self::getInstance()->deleteItem($key);
+        }
     }
 }

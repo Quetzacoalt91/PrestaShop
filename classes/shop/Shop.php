@@ -194,7 +194,7 @@ class ShopCore extends ObjectModel
 
     public function setUrl()
     {
-        $cache_id = 'Shop::setUrl_'.(int)$this->id;
+        $cache_id = 'Shop|setUrl_'.(int)$this->id;
         if (!Cache::isStored($cache_id)) {
             $row = Db::getInstance()->getRow('
               SELECT su.physical_uri, su.virtual_uri, su.domain, su.domain_ssl
@@ -721,7 +721,7 @@ class ShopCore extends ObjectModel
 
     public static function getCompleteListOfShopsID()
     {
-        $cache_id = 'Shop::getCompleteListOfShopsID';
+        $cache_id = 'Shop|getCompleteListOfShopsID';
         if (!Cache::isStored($cache_id)) {
             $list = array();
             $sql = 'SELECT id_shop FROM '._DB_PREFIX_.'shop';

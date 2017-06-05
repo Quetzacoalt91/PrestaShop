@@ -224,7 +224,7 @@ class TabCore extends ObjectModel
      */
     public static function getTab($idLang, $idTab)
     {
-        $cacheId = 'Tab::getTab_'.(int) $idLang.'-'.(int) $idTab;
+        $cacheId = '|Tab|getTab|'.(int) $idLang.'-'.(int) $idTab;
         if (!Cache::isStored($cacheId)) {
             /* Tabs selection */
             $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow('

@@ -1060,7 +1060,7 @@ class ProductCore extends ObjectModel
 
         Db::getInstance()->insert('category_product', $product_cats);
 
-        Cache::clean('Product::getProductCategories_'.(int)$this->id);
+        Cache::clean('|Product|getProductCategories|'.(int)$this->id);
 
         return true;
     }
@@ -1102,7 +1102,7 @@ class ProductCore extends ObjectModel
 
         SpecificPriceRule::applyAllRules(array((int)$this->id));
 
-        Cache::clean('Product::getProductCategories_'.(int)$this->id);
+        Cache::clean('|Product|getProductCategories|'.(int)$this->id);
 
         return true;
     }
@@ -1132,7 +1132,7 @@ class ProductCore extends ObjectModel
 
         SpecificPriceRule::applyAllRules(array((int)$this->id));
 
-        Cache::clean('Product::getProductCategories_'.(int)$this->id);
+        Cache::clean('|Product|getProductCategories|'.(int)$this->id);
 
         return $return;
     }
@@ -1160,7 +1160,7 @@ class ProductCore extends ObjectModel
             }
         }
 
-        Cache::clean('Product::getProductCategories_'.(int)$this->id);
+        Cache::clean('|Product|getProductCategories|'.(int)$this->id);
 
         return $return;
     }
@@ -2662,7 +2662,7 @@ class ProductCore extends ObjectModel
      */
     public static function getProductCategories($id_product = '')
     {
-        $cache_id = 'Product::getProductCategories_'.(int)$id_product;
+        $cache_id = '|Product|getProductCategories|'.(int)$id_product;
         if (!Cache::isStored($cache_id)) {
             $ret = array();
 
@@ -2789,7 +2789,7 @@ class ProductCore extends ObjectModel
         if (!$context) {
             $context = Context::getContext();
         }
-        $cache_id = 'Product::getCover_'.(int)$id_product.'-'.(int)$context->shop->id;
+        $cache_id = '|Product|getCover|'.(int)$id_product.'-'.(int)$context->shop->id;
         if (!Cache::isStored($cache_id)) {
             $sql = 'SELECT image_shop.`id_image`
 					FROM `'._DB_PREFIX_.'image` i
@@ -2878,7 +2878,7 @@ class ProductCore extends ObjectModel
 
         $cart_quantity = 0;
         if ((int)$id_cart) {
-            $cache_id = 'Product::getPriceStatic_'.(int)$id_product.'-'.(int)$id_cart;
+            $cache_id = '|Product|getPriceStatic|'.(int)$id_product.'-'.(int)$id_cart;
             if (!Cache::isStored($cache_id) || ($cart_quantity = Cache::retrieve($cache_id) != (int)$quantity)) {
                 $sql = 'SELECT SUM(`quantity`)
 				FROM `'._DB_PREFIX_.'cart_product`
@@ -5092,7 +5092,7 @@ class ProductCore extends ObjectModel
             return true;
         }
 
-        $cache_id = 'Product::checkAccess_'.(int)$id_product.'-'.(int)$id_customer.(!$id_customer ? '-'.(int)Group::getCurrent()->id : '');
+        $cache_id = '|Product|checkAccess|'.(int)$id_product.'-'.(int)$id_customer.(!$id_customer ? '-'.(int)Group::getCurrent()->id : '');
         if (!Cache::isStored($cache_id)) {
             if (!$id_customer) {
                 $result = (bool)Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue('
@@ -5703,7 +5703,7 @@ class ProductCore extends ObjectModel
     public static function getAttributesParams($id_product, $id_product_attribute)
     {
         $id_lang = (int)Context::getContext()->language->id;
-        $cache_id = 'Product::getAttributesParams_'.(int)$id_product.'-'.(int)$id_product_attribute.'-'.(int)$id_lang;
+        $cache_id = '|Product|getAttributesParams|'.(int)$id_product.'-'.(int)$id_product_attribute.'-'.(int)$id_lang;
 
         if (!Cache::isStored($cache_id)) {
             $result = Db::getInstance()->executeS('

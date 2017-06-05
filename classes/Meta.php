@@ -382,7 +382,7 @@ class MetaCore extends ObjectModel
 				WHERE cl.`id_lang` = '.(int) $idLang.'
 					AND cl.`id_category` = '.(int) $idCategory.Shop::addSqlRestrictionOnLang('cl');
 
-        $cacheId = 'Meta::getCategoryMetas'.(int) $idCategory.'-'.(int) $idLang;
+        $cacheId = '|Meta|getCategoryMetas|'.(int) $idCategory.'-'.(int) $idLang;
         if (!Cache::isStored($cacheId)) {
             if ($row = Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow($sql)) {
                 if (empty($row['meta_description'])) {

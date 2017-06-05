@@ -373,7 +373,7 @@ abstract class ModuleCore
         }
         $this->id = Db::getInstance()->Insert_ID();
 
-        Cache::clean('Module::isInstalled'.$this->name);
+        Cache::clean('Module|isInstalled|'.$this->name);
 
         // Enable the module for current shops in context
         $this->enable();
@@ -699,8 +699,8 @@ abstract class ModuleCore
 
         // Uninstall the module
         if (Db::getInstance()->execute('DELETE FROM `'._DB_PREFIX_.'module` WHERE `id_module` = '.(int)$this->id)) {
-            Cache::clean('Module::isInstalled'.$this->name);
-            Cache::clean('Module::getModuleIdByName_'.pSQL($this->name));
+            Cache::clean('Module|isInstalled|'.$this->name);
+            Cache::clean('Module|getModuleIdByName|'.pSQL($this->name));
             return true;
         }
 
@@ -2121,12 +2121,12 @@ abstract class ModuleCore
      */
     public static function isInstalled($module_name)
     {
-        if (!Cache::isStored('Module::isInstalled'.$module_name)) {
+        if (!Cache::isStored('Module|isInstalled|'.$module_name)) {
             $id_module = Module::getModuleIdByName($module_name);
-            Cache::store('Module::isInstalled'.$module_name, (bool)$id_module);
+            Cache::store('Module|isInstalled|'.$module_name, (bool)$id_module);
             return (bool)$id_module;
         }
-        return Cache::retrieve('Module::isInstalled'.$module_name);
+        return Cache::retrieve('Module|isInstalled|'.$module_name);
     }
 
     public function isEnabledForShopContext()
@@ -2142,16 +2142,16 @@ abstract class ModuleCore
 
     public static function isEnabled($module_name)
     {
-        if (!Cache::isStored('Module::isEnabled'.$module_name)) {
+        if (!Cache::isStored('Module|isEnabled|'.$module_name)) {
             $active = false;
             $id_module = Module::getModuleIdByName($module_name);
             if (Db::getInstance()->getValue('SELECT `id_module` FROM `'._DB_PREFIX_.'module_shop` WHERE `id_module` = '.(int)$id_module.' AND `id_shop` = '.(int)Context::getContext()->shop->id)) {
                 $active = true;
             }
-            Cache::store('Module::isEnabled'.$module_name, (bool)$active);
+            Cache::store('Module|isEnabled|'.$module_name, (bool)$active);
             return (bool)$active;
         }
-        return Cache::retrieve('Module::isEnabled'.$module_name);
+        return Cache::retrieve('Module|isEnabled|'.$module_name);
     }
 
     public function isRegisteredInHook($hook)
@@ -2591,7 +2591,7 @@ abstract class ModuleCore
      */
     public static function getModuleIdByName($name)
     {
-        $cache_id = 'Module::getModuleIdByName_'.pSQL($name);
+        $cache_id = 'Module|getModuleIdByName|'.pSQL($name);
         if (!Cache::isStored($cache_id)) {
             $result = (int)Db::getInstance()->getValue('SELECT `id_module` FROM `'._DB_PREFIX_.'module` WHERE `name` = "'.pSQL($name).'"');
             Cache::store($cache_id, $result);

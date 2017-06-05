@@ -273,7 +273,7 @@ class StockAvailableCore extends ObjectModel
             Db::getInstance()->update('stock_available', array('quantity' => 0 ), 'id_product = '.(int)$id_product);
         }
 
-        Cache::clean('StockAvailable::getQuantityAvailableByProduct_'.(int)$id_product.'*');
+        Cache::clean('|StockAvailable|getQuantityAvailableByProduct|'.(int)$id_product);
     }
 
     /**
@@ -362,7 +362,7 @@ class StockAvailableCore extends ObjectModel
             $id_product_attribute = 0;
         }
 
-        $key = 'StockAvailable::getQuantityAvailableByProduct_'.(int)$id_product.'-'.(int)$id_product_attribute.'-'.(int)$id_shop;
+        $key = '|StockAvailable|getQuantityAvailableByProduct|'.(int)$id_product.'|'.(int)$id_product_attribute.'-'.(int)$id_shop;
         if (!Cache::isStored($key)) {
             $query = new DbQuery();
             $query->select('SUM(quantity)');
@@ -537,7 +537,7 @@ class StockAvailableCore extends ObjectModel
             );
         }
 
-        Cache::clean('StockAvailable::getQuantityAvailableByProduct_'.(int)$id_product.'*');
+        Cache::clean('|StockAvailable|getQuantityAvailableByProduct|'.(int)$id_product);
     }
 
     /**
@@ -596,7 +596,7 @@ class StockAvailableCore extends ObjectModel
             $stock_available->postSave();
         }
 
-        Cache::clean('StockAvailable::getQuantityAvailableByProduct_'.(int)$id_product.'*');
+        Cache::clean('|StockAvailable|getQuantityAvailableByProduct|'.(int)$id_product);
 
         return $res;
     }

@@ -669,7 +669,7 @@ class LanguageCore extends ObjectModel
             die(Context::getContext()->getTranslator()->trans('Fatal error: ISO code is not correct', array(), 'Admin.International.Notification').' '.Tools::safeOutput($iso_code));
         }
 
-        $key = 'Language::getIdByIso_'.$iso_code;
+        $key = '|Language|getIdByIso|'.$iso_code;
         if ($no_cache || !Cache::isStored($key)) {
             $id_lang = Db::getInstance()->getValue('SELECT `id_lang` FROM `'._DB_PREFIX_.'lang` WHERE `iso_code` = \''.pSQL(strtolower($iso_code)).'\'');
 
@@ -1100,7 +1100,7 @@ class LanguageCore extends ObjectModel
 
     public static function getLanguagePackListContent($iso, $tar)
     {
-        $key = 'Language::getLanguagePackListContent_'.$iso;
+        $key = '|Language|getLanguagePackListContent|'.$iso;
         if (!Cache::isStored($key)) {
             if (!$tar instanceof \Archive_Tar) {
                 return false;

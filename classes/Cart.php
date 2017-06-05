@@ -443,7 +443,7 @@ class CartCore extends ObjectModel
             return array();
         }
 
-        $cache_key = 'Cart::getCartRules_'.$this->id.'-'.$filter;
+        $cache_key = '|Cart|getCartRules|'.$this->id.'-'.$filter;
         if (!Cache::isStored($cache_key)) {
             $result = Db::getInstance()->executeS(
                 'SELECT cr.*, crl.`id_lang`, crl.`name`, cd.`id_cart`
@@ -503,7 +503,7 @@ class CartCore extends ObjectModel
      */
     public function getOrderedCartRulesIds($filter = CartRule::FILTER_ACTION_ALL)
     {
-        $cache_key = 'Cart::getOrderedCartRulesIds_'.$this->id.'-'.$filter.'-ids';
+        $cache_key = '|Cart|getOrderedCartRulesIds|'.$this->id.'-'.$filter.'-ids';
         if (!Cache::isStored($cache_key)) {
             $result = Db::getInstance()->executeS(
                 'SELECT cr.`id_cart_rule`
@@ -540,7 +540,7 @@ class CartCore extends ObjectModel
         if (!CartRule::isFeatureActive()) {
             return 0;
         }
-        $cache_id = 'Cart::getDiscountsCustomer_'.(int)$this->id.'-'.(int)$id_cart_rule;
+        $cache_id = '|Cart|getDiscountsCustomer|'.(int)$this->id.'-'.(int)$id_cart_rule;
         if (!Cache::isStored($cache_id)) {
             $result = (int)Db::getInstance()->getValue('
                 SELECT COUNT(*)
@@ -1090,15 +1090,16 @@ class CartCore extends ObjectModel
             return false;
         }
 
-        Cache::clean('Cart::getCartRules_'.$this->id.'-'.CartRule::FILTER_ACTION_ALL);
-        Cache::clean('Cart::getCartRules_'.$this->id.'-'.CartRule::FILTER_ACTION_SHIPPING);
-        Cache::clean('Cart::getCartRules_'.$this->id.'-'.CartRule::FILTER_ACTION_REDUCTION);
-        Cache::clean('Cart::getCartRules_'.$this->id.'-'.CartRule::FILTER_ACTION_GIFT);
+        Cache::clean(array(
+            '|Cart|getCartRules|'.$this->id.'-'.CartRule::FILTER_ACTION_ALL,
+            '|Cart|getCartRules|'.$this->id.'-'.CartRule::FILTER_ACTION_SHIPPING,
+            '|Cart|getCartRules|'.$this->id.'-'.CartRule::FILTER_ACTION_REDUCTION,
+            '|Cart|getCartRules|'.$this->id.'-'.CartRule::FILTER_ACTION_GIFT,
 
-        Cache::clean('Cart::getOrderedCartRulesIds_'.$this->id.'-'.CartRule::FILTER_ACTION_ALL. '-ids');
-        Cache::clean('Cart::getOrderedCartRulesIds_'.$this->id.'-'.CartRule::FILTER_ACTION_SHIPPING. '-ids');
-        Cache::clean('Cart::getOrderedCartRulesIds_'.$this->id.'-'.CartRule::FILTER_ACTION_REDUCTION. '-ids');
-        Cache::clean('Cart::getOrderedCartRulesIds_'.$this->id.'-'.CartRule::FILTER_ACTION_GIFT. '-ids');
+            '|Cart|getOrderedCartRulesIds|'.$this->id.'-'.CartRule::FILTER_ACTION_ALL. '-ids',
+            '|Cart|getOrderedCartRulesIds|'.$this->id.'-'.CartRule::FILTER_ACTION_SHIPPING. '-ids',
+            '|Cart|getOrderedCartRulesIds|'.$this->id.'-'.CartRule::FILTER_ACTION_REDUCTION. '-ids',
+            '|Cart|getOrderedCartRulesIds|'.$this->id.'-'.CartRule::FILTER_ACTION_GIFT. '-ids'));
 
         if ((int)$cartRule->gift_product) {
             $this->updateQty(1, $cartRule->gift_product, $cartRule->gift_product_attribute, false, 'up', 0, null, false);
@@ -1465,7 +1466,7 @@ class CartCore extends ObjectModel
      */
     public function orderExists()
     {
-        $cache_id = 'Cart::orderExists_'.(int)$this->id;
+        $cache_id = '|Cart|orderExists|'.(int)$this->id;
         if (!Cache::isStored($cache_id)) {
             $result = (bool)Db::getInstance()->getValue('SELECT count(*) FROM `'._DB_PREFIX_.'orders` WHERE `id_cart` = '.(int)$this->id);
             Cache::store($cache_id, $result);
@@ -1483,15 +1484,16 @@ class CartCore extends ObjectModel
      */
     public function removeCartRule($id_cart_rule)
     {
-        Cache::clean('Cart::getCartRules_'.$this->id.'-'.CartRule::FILTER_ACTION_ALL);
-        Cache::clean('Cart::getCartRules_'.$this->id.'-'.CartRule::FILTER_ACTION_SHIPPING);
-        Cache::clean('Cart::getCartRules_'.$this->id.'-'.CartRule::FILTER_ACTION_REDUCTION);
-        Cache::clean('Cart::getCartRules_'.$this->id.'-'.CartRule::FILTER_ACTION_GIFT);
+        Cache::clean(array(
+            '|Cart|getCartRules|'.$this->id.'-'.CartRule::FILTER_ACTION_ALL,
+            '|Cart|getCartRules|'.$this->id.'-'.CartRule::FILTER_ACTION_SHIPPING,
+            '|Cart|getCartRules|'.$this->id.'-'.CartRule::FILTER_ACTION_REDUCTION,
+            '|Cart|getCartRules|'.$this->id.'-'.CartRule::FILTER_ACTION_GIFT,
 
-        Cache::clean('Cart::getCartRules_'.$this->id.'-'.CartRule::FILTER_ACTION_ALL). '-ids';
-        Cache::clean('Cart::getCartRules_'.$this->id.'-'.CartRule::FILTER_ACTION_SHIPPING). '-ids';
-        Cache::clean('Cart::getCartRules_'.$this->id.'-'.CartRule::FILTER_ACTION_REDUCTION). '-ids';
-        Cache::clean('Cart::getCartRules_'.$this->id.'-'.CartRule::FILTER_ACTION_GIFT). '-ids';
+            '|Cart|getCartRules|'.$this->id.'-'.CartRule::FILTER_ACTION_ALL. '-ids',
+            '|Cart|getCartRules|'.$this->id.'-'.CartRule::FILTER_ACTION_SHIPPING. '-ids',
+            '|Cart|getCartRules|'.$this->id.'-'.CartRule::FILTER_ACTION_REDUCTION. '-ids',
+            '|Cart|getCartRules|'.$this->id.'-'.CartRule::FILTER_ACTION_GIFT. '-ids'));
 
         $result = Db::getInstance()->delete('cart_cart_rule', '`id_cart_rule` = '.(int)$id_cart_rule.' AND `id_cart` = '.(int)$this->id, 1);
 
@@ -2976,7 +2978,7 @@ class CartCore extends ObjectModel
     public function getAddressCollection()
     {
         $collection = array();
-        $cache_id = 'Cart::getAddressCollection'.(int)$this->id;
+        $cache_id = '|Cart|getAddressCollection|'.(int)$this->id;
         if (!Cache::isStored($cache_id)) {
             $result = Db::getInstance()->executeS(
                 'SELECT DISTINCT `id_address_delivery`
@@ -4491,7 +4493,7 @@ class CartCore extends ObjectModel
         WHERE `id_cart` = '.(int)$this->id.'
         '.(Configuration::get('PS_ALLOW_MULTISHIPPING') ? ' AND `id_shop` = '.(int)$this->id_shop : '');
 
-        $cache_id = 'Cart::setNoMultishipping'.(int)$this->id.'-'.(int)$this->id_shop.((isset($this->id_address_delivery) && $this->id_address_delivery) ? '-'.(int)$this->id_address_delivery : '');
+        $cache_id = '|Cart|setNoMultishipping|'.(int)$this->id.'-'.(int)$this->id_shop.((isset($this->id_address_delivery) && $this->id_address_delivery) ? '-'.(int)$this->id_address_delivery : '');
         if (!Cache::isStored($cache_id)) {
             if ($result = (bool)Db::getInstance()->execute($sql)) {
                 $emptyCache = true;

@@ -284,7 +284,7 @@ class AddressCore extends ObjectModel
             return false;
         }
 
-        $cache_id = 'Address::isCountryActiveById_'.(int)$id_address;
+        $cache_id = '|Address|isCountryActiveById|'.(int)$id_address;
         if (!Cache::isStored($cache_id)) {
             $result = (bool)Db::getInstance(_PS_USE_SQL_SLAVE_)->getvalue('
 			SELECT c.`active`
@@ -388,7 +388,7 @@ class AddressCore extends ObjectModel
         if (!$id_customer) {
             return false;
         }
-        $cache_id = 'Address::getFirstCustomerAddressId_'.(int)$id_customer.'-'.(bool)$active;
+        $cache_id = '|Address|getFirstCustomerAddressId|'.(int)$id_customer.'-'.(bool)$active;
         if (!Cache::isStored($cache_id)) {
             $result = (int)Db::getInstance(_PS_USE_SQL_SLAVE_)->getValue('
 				SELECT `id_address`
@@ -428,7 +428,7 @@ class AddressCore extends ObjectModel
         }
 
 
-        $cache_id = 'Address::initialize_'.$context_hash;
+        $cache_id = '|Address|initialize|'.$context_hash;
 
         if (!Cache::isStored($cache_id)) {
             // if an id_address has been specified retrieve the address

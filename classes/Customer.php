@@ -471,7 +471,7 @@ class CustomerCore extends ObjectModel
         if (!Validate::isUnsignedId($idCustomer)) {
             return true;
         }
-        $cacheId = 'Customer::isBanned_'.(int) $idCustomer;
+        $cacheId = '|Customer|isBanned|'.(int) $idCustomer;
         if (!Cache::isStored($cacheId)) {
             $result = (bool) !Db::getInstance(_PS_USE_SQL_SLAVE_)->getRow('
             SELECT `id_customer`
@@ -560,7 +560,7 @@ class CustomerCore extends ObjectModel
     public function getAddresses($idLang)
     {
         $shareOrder = (bool) Context::getContext()->shop->getGroup()->share_order;
-        $cacheId = 'Customer::getAddresses'.(int) $this->id.'-'.(int) $idLang.'-'.$shareOrder;
+        $cacheId = '|Customer|getAddresses|'.(int) $this->id.'-'.(int) $idLang.'-'.$shareOrder;
         if (!Cache::isStored($cacheId)) {
             $sql = 'SELECT DISTINCT a.*, cl.`name` AS country, s.name AS state, s.iso_code AS state_iso
                     FROM `'._DB_PREFIX_.'address` a
@@ -734,7 +734,8 @@ class CustomerCore extends ObjectModel
         if (!Validate::isUnsignedId($idCustomer)) {
             die(Tools::displayError());
         }
-        $cacheId = 'Customer::checkPassword'.(int) $idCustomer.'-'.$passwordHash;
+        // ToDo: check if we drop this cache
+        $cacheId = '|Customer|checkPassword|'.(int) $idCustomer.'-'.$passwordHash;
         if (!Cache::isStored($cacheId)) {
             $sql = new DbQuery();
             $sql->select('c.`id_customer`');
@@ -892,7 +893,7 @@ class CustomerCore extends ObjectModel
      */
     public static function customerIdExistsStatic($idCustomer)
     {
-        $cacheId = 'Customer::customerIdExistsStatic'.(int) $idCustomer;
+        $cacheId = '|Customer|customerIdExistsStatic|'.(int) $idCustomer;
         if (!Cache::isStored($cacheId)) {
             $result = (int) Db::getInstance()->getValue('
             SELECT `id_customer`

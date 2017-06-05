@@ -609,18 +609,18 @@ class AddressFormatCore extends ObjectModel
      */
     protected function getFormatDB($idCountry)
     {
-        if (!Cache::isStored('AddressFormat::getFormatDB'.$idCountry)) {
+        if (!Cache::isStored('|AddressFormat|getFormatDB|'.$idCountry)) {
             $format = Db::getInstance()->getValue('
 			SELECT format
 			FROM `'._DB_PREFIX_.$this->def['table'].'`
 			WHERE `id_country` = '.(int) $idCountry);
             $format = trim($format);
-            Cache::store('AddressFormat::getFormatDB'.$idCountry, $format);
+            Cache::store('|AddressFormat|getFormatDB|'.$idCountry, $format);
 
             return $format;
         }
 
-        return Cache::retrieve('AddressFormat::getFormatDB'.$idCountry);
+        return Cache::retrieve('|AddressFormat|getFormatDB|'.$idCountry);
     }
 
     /**

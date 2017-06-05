@@ -177,7 +177,7 @@ class ImageCore extends ObjectModel
      */
     public static function getBestImageAttribute($idShop, $idLang, $idProduct, $idProductAttribute)
     {
-        $cacheId = 'Image::getBestImageAttribute'.'-'.(int) $idProduct.'-'.(int) $idProductAttribute.'-'.(int) $idLang.'-'.(int) $idShop;
+        $cacheId = '|Image|getBestImageAttribute|'.(int) $idProduct.'-'.(int) $idProductAttribute.'-'.(int) $idLang.'-'.(int) $idShop;
 
         if (!Cache::isStored($cacheId)) {
             $row = Db::getInstance()->getRow('

@@ -342,7 +342,7 @@ class CarrierCore extends ObjectModel
      */
     public function getMaxDeliveryPriceByWeight($id_zone)
     {
-        $cache_id = 'Carrier::getMaxDeliveryPriceByWeight_'.(int) $this->id.'-'.(int) $id_zone;
+        $cache_id = '|Carrier|getMaxDeliveryPriceByWeight|'.(int) $this->id.'-'.(int) $id_zone;
         if (!Cache::isStored($cache_id)) {
             $sql = 'SELECT d.`price`
 					FROM `'._DB_PREFIX_.'delivery` d
@@ -452,7 +452,7 @@ class CarrierCore extends ObjectModel
      */
     public function getMaxDeliveryPriceByPrice($id_zone)
     {
-        $cache_id = 'Carrier::getMaxDeliveryPriceByPrice_'.(int) $this->id.'-'.(int) $id_zone;
+        $cache_id = '|Carrier|getMaxDeliveryPriceByPrice|'.(int) $this->id.'-'.(int) $id_zone;
         if (!Cache::isStored($cache_id)) {
             $sql = 'SELECT d.`price`
 					FROM `'._DB_PREFIX_.'delivery` d
@@ -547,7 +547,7 @@ class CarrierCore extends ObjectModel
         }
         $sql .= ' GROUP BY c.`id_carrier` ORDER BY c.`position` ASC';
 
-        $cache_id = 'Carrier::getCarriers_'.md5($sql);
+        $cache_id = '|Carrier|getCarriers|'.md5($sql);
         if (!Cache::isStored($cache_id)) {
             $carriers = Db::getInstance()->executeS($sql);
             Cache::store($cache_id, $carriers);
@@ -763,7 +763,7 @@ class CarrierCore extends ObjectModel
 
     public static function checkCarrierZone($id_carrier, $id_zone)
     {
-        $cache_id = 'Carrier::checkCarrierZone_'.(int) $id_carrier.'-'.(int) $id_zone;
+        $cache_id = '|Carrier|checkCarrierZone|'.(int) $id_carrier.'-'.(int) $id_zone;
         if (!Cache::isStored($cache_id)) {
             $sql = 'SELECT c.`id_carrier`
 						FROM `'._DB_PREFIX_.'carrier` c
@@ -1481,7 +1481,7 @@ class CarrierCore extends ObjectModel
         }
 
         // Does the product is linked with carriers?
-        $cache_id = 'Carrier::getAvailableCarrierList_'.(int) $product->id.'-'.(int) $id_shop;
+        $cache_id = '|Carrier|getAvailableCarrierList|'.(int) $product->id.'-'.(int) $id_shop;
         if (!Cache::isStored($cache_id)) {
             $query = new DbQuery();
             $query->select('id_carrier');
@@ -1521,7 +1521,7 @@ class CarrierCore extends ObjectModel
         }
 
         $available_carrier_list = array();
-        $cache_id = 'Carrier::getAvailableCarrierList_getCarriersForOrder_'.(int) $id_zone.'-'.(int) $cart->id;
+        $cache_id = '|Carrier|getAvailableCarrierList|getCarriersForOrder|'.(int) $id_zone.'-'.(int) $cart->id;
         if (!Cache::isStored($cache_id)) {
             $customer = new Customer($cart->id_customer);
             $carrier_error = array();

@@ -59,7 +59,7 @@ class ZoneCore extends ObjectModel
      */
     public static function getZones($active = false, $activeFirst = false)
     {
-        $cacheId = 'Zone::getZones_'.(bool) $active;
+        $cacheId = '|Zone|getZones|'.(int) $active;
         if (!Cache::isStored($cacheId)) {
             $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS('
 				SELECT *
