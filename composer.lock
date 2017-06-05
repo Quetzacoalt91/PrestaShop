@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "b2d98f33bc0b0902fbd3546fc52b989c",
+    "content-hash": "f69591213050841eed219b29496d28d5",
     "packages": [
         {
             "name": "beberlei/DoctrineExtensions",
@@ -498,6 +498,73 @@
                 "cache",
                 "namespace",
                 "psr-6"
+            ],
+            "time": "2016-08-07T15:04:55+00:00"
+        },
+        {
+            "name": "cache/redis-adapter",
+            "version": "0.4.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-cache/redis-adapter.git",
+                "reference": "55872608728f0f52ba996c42c360e18631ef6f63"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-cache/redis-adapter/zipball/55872608728f0f52ba996c42c360e18631ef6f63",
+                "reference": "55872608728f0f52ba996c42c360e18631ef6f63",
+                "shasum": ""
+            },
+            "require": {
+                "cache/adapter-common": "^0.3",
+                "cache/hierarchical-cache": "^0.3",
+                "cache/taggable-cache": "^0.4",
+                "php": "^5.5 || ^7.0",
+                "psr/cache": "^1.0"
+            },
+            "provide": {
+                "psr/cache-implementation": "^1.0"
+            },
+            "require-dev": {
+                "cache/integration-tests": "^0.11",
+                "phpunit/phpunit": "^4.0 || ^5.1"
+            },
+            "suggest": {
+                "ext-redis": "The extension required to use this pool."
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Cache\\Adapter\\Redis\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Aaron Scherer",
+                    "email": "aequasi@gmail.com",
+                    "homepage": "https://github.com/aequasi"
+                },
+                {
+                    "name": "Tobias Nyholm",
+                    "email": "tobias.nyholm@gmail.com",
+                    "homepage": "https://github.com/nyholm"
+                }
+            ],
+            "description": "A PSR-6 cache implementation using Redis (PhpRedis). This implementation supports tags",
+            "homepage": "http://www.php-cache.com/en/latest/",
+            "keywords": [
+                "cache",
+                "phpredis",
+                "psr-6",
+                "redis",
+                "tag"
             ],
             "time": "2016-08-07T15:04:55+00:00"
         },

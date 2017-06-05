@@ -31,7 +31,7 @@ abstract class CacheCore implements CacheItemPoolInterface
     /**
      * @var CacheItemPoolInterface
      */
-    protected static $instance;
+    protected static $instance = null;
 
     /**
      * @var array List of blacklisted tables for SQL cache, these tables won't be indexed
@@ -59,9 +59,25 @@ abstract class CacheCore implements CacheItemPoolInterface
     public static function getInstance()
     {
         if (!self::$instance) {
-            self::$instance = new Cache\Adapter\PHPArray\ArrayCachePool();
+            self::$instance = self::initInstance();
         }
         return self::$instance;
+    }
+
+    private static function initInstance()
+    {
+            global $kernel;
+            if ($kernel instanceof Symfony\Component\HttpKernel\HttpKernelInterface) {
+                 return $kernel->getContainer()->get('cache');
+            }
+
+            $client = new \Redis();
+            $client->connect('127.0.0.1', 6379);
+            $pools = array(
+                new \Cache\Adapter\PHPArray\ArrayCachePool(),
+                new \Cache\Adapter\Redis\RedisCachePool($client),
+            );
+            return new \Cache\Adapter\Chain\CachePoolChain($pools);
     }
 
     /**
@@ -84,7 +100,7 @@ abstract class CacheCore implements CacheItemPoolInterface
     public static function store($key, $value)
     {
         $item = self::getInstance()->getItem($key)->set($value);
-        self::getInstance()->save($item);
+        self::getInstance()->saveDeferred($item);
     }
 
     public static function retrieve($key)
