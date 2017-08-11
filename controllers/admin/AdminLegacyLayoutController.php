@@ -54,12 +54,12 @@ class AdminLegacyLayoutControllerCore extends AdminController
         $this->routeName = $routeName;
     }
 
-    public function setMedia()
+    public function setMedia($isNewTheme = false)
     {
         parent::setMedia(true);
     }
 
-    public function viewAccess()
+    public function viewAccess($disable = false)
     {
         return true;
     }
