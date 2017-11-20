@@ -726,7 +726,7 @@ class TabCore extends ObjectModel
      */
     public static function getPositionBeforeClassName($className)
     {
-        $position = Tab::getPositionByClassName($className);
+        $position = static::getPositionByClassName($className);
         if (is_numeric($position)) {
             $newPosition = (int)$position - 1;
             if ($newPosition <= 0) {
@@ -745,7 +745,7 @@ class TabCore extends ObjectModel
      */
     public static function getPositionAfterClassName($className)
     {
-        $position = Tab::getPositionByClassName($className);
+        $position = static::getPositionByClassName($className);
         if (is_numeric($position)) {
             return (int)$position + 1;
         }
