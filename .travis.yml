@@ -25,6 +25,7 @@ php:
 env:
     global:
         - SYMFONY_DEPRECATIONS_HELPER=disabled
+        - PRESTASHOP_REFERENCE_VERSION=1.7.0.0
 
 matrix:
   include:
@@ -55,6 +56,7 @@ script:
   - composer phpunit-sf
   - composer phpunit-controllers
   - bash ./travis-scripts/run-selenium-tests
+  - bash ./travis-scripts/diff-upgrade-db
   - bash ./travis-scripts/run-functional-tests # Must run before starter theme
   - bash ./travis-scripts/test-startertheme
 
