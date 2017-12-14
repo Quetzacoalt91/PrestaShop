@@ -9,6 +9,7 @@ addons:
         - libapache2-mod-fastcgi
         - libappindicator1
         - fonts-liberation
+        - mysql-utilities
 
 cache:
   directories:
@@ -25,7 +26,7 @@ dist: trusty
 env:
     global:
         - SYMFONY_DEPRECATIONS_HELPER=disabled
-        - PRESTASHOP_REFERENCE_VERSION=1.7.0.0
+        - PRESTASHOP_REFERENCE_VERSION=1.7.0.1
 
 matrix:
   include:
@@ -54,6 +55,7 @@ script:
 
 after_script:
   - sudo cat /var/log/apache2/error.log
+  - docker logs upgrade-test # Created in sqldiff step
 
 after_failure:
   - curl -L http://localhost/
