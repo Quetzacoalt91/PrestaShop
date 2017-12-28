@@ -58,6 +58,7 @@ fi
 # Run SQL upgrade
 echo "Running SQL upgrade ..."
 docker exec -ti upgrade-test php /var/www/html/install-dev/upgrade/upgrade.php
+php $TRAVIS_BUILD_DIR/install-dev/upgrade/upgrade.php
 
 # Run doctrine upgrade
 echo "Running Doctrine database upgrade"
