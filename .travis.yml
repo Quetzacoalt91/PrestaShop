@@ -1,7 +1,7 @@
 language: php
 
 addons:
-    chrome: stable
+    chrome: latest
     apt:
         packages:
         - apache2
