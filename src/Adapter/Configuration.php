@@ -108,35 +108,33 @@ class Configuration extends ParameterBag implements ConfigurationInterface
 
     /**
      * Set configuration value
-     * @param $key
-     * @param $value
+     * @param string $key
+     * @param mixed $value
      * @return $this
      * @throws \Exception
      */
     public function set($key, $value)
     {
-        // By default, set a piece of configuration for all available shops and shop groups
-        $shopGroupId = null;
-        $shopId = null;
+        return $this->storeInConfiguration($key, $value);
+    }
 
-        if ($this->shop instanceof Shop) {
-            $shopGroupId = $this->shop->id_shop_group;
-            $shopId = $this->shop->id;
-        }
-
-        $success = ConfigurationLegacy::updateValue(
+    /**
+     * Set configuration value which contains HTML
+     * 
+     * @param string $key
+     * @param mixed $value
+     * @return $this
+     * @throws \Exception
+     */
+    public function setHtml($key, $value)
+    {
+        return $this->storeInConfiguration(
             $key,
             $value,
-            false,
-            $shopGroupId,
-            $shopId
+            array(
+                'html' => true,
+            )
         );
-
-        if (!$success) {
-            throw new \Exception("Could not update configuration");
-        }
-
-        return $this;
     }
 
     /**
@@ -220,5 +218,42 @@ class Configuration extends ParameterBag implements ConfigurationInterface
     public function restrictUpdatesTo(Shop $shop)
     {
         $this->shop = $shop;
+    }
+
+    /**
+     * Send data to the legacy configuration class for storage
+     *
+     * @param string $key
+     * @param mixed $value
+     * @param array $options
+     * @return $this
+     * @throws \Exception
+     */
+    protected function storeInConfiguration($key, $value, array $options = array())
+    {
+        // By default, set a piece of configuration for all available shops and shop groups
+        $shopGroupId = null;
+        $shopId = null;
+
+        if ($this->shop instanceof Shop) {
+            $shopGroupId = $this->shop->id_shop_group;
+            $shopId = $this->shop->id;
+        }
+
+        $html = !empty($options['html']) ? $options['html'] : false;
+
+        $success = ConfigurationLegacy::updateValue(
+            $key,
+            $value,
+            $html,
+            $shopGroupId,
+            $shopId
+        );
+
+        if (!$success) {
+            throw new \Exception("Could not update configuration");
+        }
+
+        return $this;
     }
 }
