@@ -34,6 +34,8 @@ use Twig\Loader\FilesystemLoader;
  */
 class ModuleTemplateLoader extends FilesystemLoader
 {
+    const NAMESPACE_MODULES = 'Modules';
+
     /**
      * @param array $namespaces a collection of path namespaces with namespace names
      * @param array $modulePaths A path or an array of paths where to look for module templates
@@ -42,6 +44,7 @@ class ModuleTemplateLoader extends FilesystemLoader
     {
         if (!empty($modulePaths)) {
             $this->registerNamespacesFromConfig($modulePaths, $namespaces);
+            $this->registerModuleNamespace($modulePaths);
         }
     }
 
@@ -62,6 +65,22 @@ class ModuleTemplateLoader extends FilesystemLoader
                 }
             }
             $this->setPaths($templatePaths, $namespace);
+        }
+    }
+
+    /**
+     * Register module templates in their dedicated namespace
+     * 
+     * @param array $modulePaths
+     */
+    private function registerModuleNamespace(array $modulePaths)
+    {
+        foreach ($modulePaths as $path) {
+            if (is_dir($dir = $path . '/views/templates')) {
+                $explodedPath = explode('/', $path);
+                $moduleName = end($explodedPath);
+                $this->setPaths($dir, self::NAMESPACE_MODULES.':'.$moduleName);            
+            }
         }
     }
 }
