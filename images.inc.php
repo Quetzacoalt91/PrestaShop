@@ -49,7 +49,7 @@ function checkImage($file, $maxFileSize = 0)
  */
 function checkImageUploadError($file)
 {
-    return ImageManager::getErrorFromCode($file['error']);
+    return ImageManager::getErrorFromCode($file['error']); // doge
 }
 
 /**
