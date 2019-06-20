@@ -937,7 +937,18 @@ class LanguageCore extends ObjectModel
 
     public static function checkAndAddLanguage($iso_code, $lang_pack = false, $only_add = false, $params_lang = null)
     {
-        if (Language::getIdByIso($iso_code)) {
+        $idExistingLang = Language::getIdByIso($iso_code);
+        if ($idExistingLang) {
+            $lang = new Language($idExistingLang);
+            // If we deal with a manually create language, we can amend its missing locale
+            if (empty($lang->locale)) {
+                // If the language pack has not been provided, retrieve it from prestashop.com
+                if (!$lang_pack) {
+                    $lang_pack = self::getLangDetails($iso_code);
+                }
+                $lang->locale = $lang_pack['locale'];
+                return $lang->save();
+            }
             return true;
         }
 
@@ -1289,24 +1300,29 @@ class LanguageCore extends ObjectModel
     {
         $useLang = Db::getInstance()->getRow('SELECT * FROM `' . _DB_PREFIX_ . 'lang` WHERE `iso_code` = "' . pSQL($iso_code) . '" ', true, false);
 
-        if (!empty($useLang)) {
-            $lang = new Language($useLang['id_lang']);
+        if (empty($useLang)) {
+            return true;
+        }
+        $lang = new Language($useLang['id_lang']);
 
-            $tables = Db::getInstance()->executeS('SHOW TABLES LIKE \'' . str_replace('_', '\\_', _DB_PREFIX_) . '%\_lang\' ');
-            foreach ($tables as $table) {
-                foreach ($table as $t) {
-                    $className = ucfirst(Tools::toCamelCase(str_replace(_DB_PREFIX_, '', $t)));
+        if (empty($lang->locale)) {
+            return true;
+        }
 
-                    if (_DB_PREFIX_ . 'country_lang' == $t) {
-                        self::updateMultilangFromCldr($lang);
-                    } else {
-                        self::updateMultilangFromClass($t, $className, $lang);
-                    }
+        $tables = Db::getInstance()->executeS('SHOW TABLES LIKE \'' . str_replace('_', '\\_', _DB_PREFIX_) . '%\_lang\' ');
+        foreach ($tables as $table) {
+            foreach ($table as $t) {
+                $className = ucfirst(Tools::toCamelCase(str_replace(_DB_PREFIX_, '', $t)));
+
+                if (_DB_PREFIX_ . 'country_lang' == $t) {
+                    self::updateMultilangFromCldr($lang);
+                } else {
+                    self::updateMultilangFromClass($t, $className, $lang);
                 }
             }
-
-            Hook::exec('actionUpdateLangAfter', array('lang' => $lang));
         }
+
+        Hook::exec('actionUpdateLangAfter', array('lang' => $lang));
 
         return true;
     }
