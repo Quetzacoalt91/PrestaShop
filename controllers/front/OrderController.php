@@ -26,7 +26,7 @@
 use PrestaShop\PrestaShop\Adapter\Product\PriceFormatter;
 use PrestaShop\PrestaShop\Core\Foundation\Templating\RenderableProxy;
 
-class OrderControllerCore extends FrontController
+class OrderControllerCore extends FrontController implements CheckoutControllerInterface
 {
     public $ssl = true;
     public $php_self = 'order';
@@ -83,7 +83,7 @@ class OrderControllerCore extends FrontController
     }
 
     /**
-     * @return CheckoutProcess
+     * {@inheritdoc}
      */
     public function getCheckoutProcess()
     {
