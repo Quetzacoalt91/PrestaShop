@@ -1,0 +1,20 @@
+name: Need autoupgrade PR
+on:
+  pull_request:
+
+permissions: write-all
+
+jobs:
+  add_label:
+    name: Verify Need autoupgrade PR
+    runs-on: ubuntu-latest
+    permissions: write-all
+    steps:
+      - uses: actions/checkout@v4
+
+      - run: gh pr edit "$NUMBER" --add-label "$LABELS"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          NUMBER: ${{ github.event.number }}
+          LABELS: Needs autoupgrade PR
