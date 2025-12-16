@@ -378,11 +378,16 @@ abstract class DbCore
             $sql = $sql->build();
         }
 
-        $this->result = $this->_query($sql);
-
-        if (!$this->result && $this->getNumberError() == 2006) {
-            $this->connect();
+        try {
             $this->result = $this->_query($sql);
+        } catch (PrestaShopException $e) {
+            // On mysql and equivalent, error 2006 means the server has gone away (Exception code is HY000 though and can't be relied on)
+            if ($this->getNumberError() === 2006) {
+                $this->connect();
+                $this->result = $this->_query($sql);
+            } else {
+                throw $e;
+            }
         }
 
         if (_PS_DEBUG_SQL_) {
